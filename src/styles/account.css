@@ -1,0 +1,712 @@
+.account-shell {
+    background: #f5f5f5;
+    color: #272b31;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: left;
+}
+.account-area {
+    padding: 28px 24px 60px;
+    min-height: 65vh;
+}
+.account-frame {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 28px;
+    max-width: 1200px;
+    margin: auto;
+    align-items: start;
+}
+.account-content {
+    min-width: 0;
+}
+.account-sidebar {
+    font-size: 14px;
+}
+.account-identity {
+    display: flex;
+    gap: 13px;
+    align-items: center;
+    padding: 16px 0 24px;
+    border-bottom: 1px solid #e7e7e7;
+    margin-bottom: 14px;
+}
+.account-identity img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: white;
+    border: 1px solid #eee;
+}
+.account-identity strong {
+    display: block;
+    font-size: 14px;
+    max-width: 140px;
+    overflow-wrap: anywhere;
+}
+.account-identity a {
+    display: block;
+    color: #777;
+    font-size: 12px;
+    margin-top: 4px;
+    text-decoration: none;
+}
+.account-nav-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    color: #333;
+    font-size: 14px;
+    margin: 0;
+    text-decoration: none;
+}
+.account-nav-label svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: #ee4d2d;
+}
+.account-subnav {
+    display: grid;
+    padding: 0 0 8px 32px;
+}
+.account-subnav a {
+    display: flex;
+    align-items: center;
+    min-height: 36px;
+    color: #666;
+    font-size: 13px;
+    text-decoration: none;
+}
+.account-sidebar a:hover,
+.account-sidebar .account-active {
+    color: #d83d1f;
+}
+.account-logout {
+    border: 0;
+    border-top: 1px solid #e7e7e7;
+    width: 100%;
+    padding: 18px 0;
+    margin-top: 18px;
+    text-align: left;
+    background: transparent;
+    color: #777;
+    cursor: pointer;
+    font-size: 13px;
+}
+.account-panel {
+    background: #fff;
+    border: 1px solid #ededed;
+    border-radius: 2px;
+    min-height: 540px;
+    padding: 0 28px 28px;
+    box-shadow: 0 1px 2px #00000006;
+}
+.account-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid #eee;
+    padding: 22px 0;
+    margin-bottom: 24px;
+}
+.account-panel h1,
+.account-panel h2 {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0;
+}
+.account-panel h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 6px;
+}
+.account-panel-header p {
+    margin: 5px 0 0;
+    color: #777;
+    font-size: 13px;
+}
+.account-panel button,
+.account-sidebar button {
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.account-panel button:disabled,
+.account-sidebar button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.account-primary,
+.account-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px solid transparent;
+    min-height: 42px;
+    padding: 10px 18px;
+    border-radius: 2px;
+    font: inherit;
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.account-primary {
+    background: #d94323;
+    border-color: #d94323;
+    color: #fff;
+}
+.account-primary:hover:enabled {
+    background: #c0381c;
+}
+.account-secondary {
+    background: #fff;
+    border-color: #d9d9d9;
+    color: #555;
+}
+.account-secondary:hover:enabled {
+    border-color: #d94323;
+    color: #d94323;
+}
+.account-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    background: transparent;
+    border: 0;
+    color: #1672b4;
+    text-decoration: none;
+    padding: 0 8px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.account-link:hover {
+    text-decoration: underline;
+}
+.account-panel input:not([type='radio']):not([type='checkbox']):not([type='file']),
+.account-panel select {
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    box-sizing: border-box;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    background: #fff;
+    padding: 10px 12px;
+    font: inherit;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+.account-panel input::placeholder {
+    color: #999;
+}
+.account-panel input:focus,
+.account-panel select:focus {
+    border-color: #d94323;
+    box-shadow: 0 0 0 2px #ee4d2d1a;
+}
+.account-panel a:focus-visible,
+.account-panel button:focus-visible,
+.account-sidebar a:focus-visible,
+.account-sidebar button:focus-visible {
+    outline: 2px solid #d94323;
+    outline-offset: 3px;
+}
+.account-form {
+    max-width: 720px;
+    padding: 10px 0;
+}
+.account-form-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 22px;
+    align-items: center;
+    margin: 0 0 20px;
+    font-size: 14px;
+    border: 0;
+    padding: 0;
+    min-width: 0;
+}
+.account-form-row > span:first-child {
+    text-align: right;
+    color: #777;
+    font-size: 13px;
+}
+.account-form-row strong {
+    font-size: 14px;
+    font-weight: 400;
+}
+.account-radio-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+}
+.account-radio-row label,
+.account-check {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    min-height: 36px;
+}
+.account-panel input[type='radio'],
+.account-panel input[type='checkbox'] {
+    width: 17px;
+    height: 17px;
+    accent-color: #d94323;
+}
+.profile-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 190px;
+    gap: 28px;
+    padding: 6px 0 26px;
+}
+.profile-grid .account-form-row {
+    grid-template-columns: 115px minmax(0, 1fr);
+    gap: 18px;
+}
+.profile-avatar {
+    border-left: 1px solid #eee;
+    margin: 10px 0 auto;
+    padding: 16px 0 16px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+.profile-avatar img {
+    width: 104px;
+    height: 104px;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #f5f5f5;
+}
+.profile-avatar p {
+    font-size: 12px;
+    line-height: 1.7;
+    color: #999;
+    margin: 0;
+}
+.account-empty {
+    display: grid;
+    place-items: center;
+    min-height: 200px;
+    color: #777;
+    font-size: 15px;
+    text-align: center;
+    padding: 30px 15px;
+}
+.account-state {
+    padding: 30px 0;
+    color: #777;
+    font-size: 14px;
+}
+.account-error,
+.account-success {
+    padding: 12px 16px;
+    border: 1px solid #f0c9c0;
+    border-radius: 3px;
+    background: #fff4ef;
+    color: #a3331e;
+    margin: 14px 0;
+    font-size: 13px;
+    line-height: 1.6;
+}
+.account-success {
+    background: #f0faf4;
+    color: #267145;
+    border-color: #cce7d7;
+}
+.account-method-section + .account-method-section {
+    margin-top: 16px;
+    border-top: 1px solid #eee;
+}
+.account-method-section .account-panel-header h2 {
+    font-size: 18px;
+}
+.account-bank-panel .account-empty {
+    min-height: 150px;
+}
+.account-inline-form {
+    padding: 10px 0 24px;
+}
+.account-inline-form h2,
+.account-inline-form h3 {
+    margin: 0 0 24px;
+}
+.account-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.account-record {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid #eee;
+}
+.account-record:last-child {
+    border-bottom: 0;
+}
+.account-record > div:first-child {
+    max-width: 65%;
+}
+.account-record p {
+    font-size: 13px;
+    color: #777;
+    margin: 5px 0;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+.account-record h3 {
+    font-size: 15px;
+    font-weight: 400;
+}
+.account-phone {
+    color: #777;
+    font-size: 13px;
+    border-left: 1px solid #ddd;
+    padding-left: 10px;
+    margin-left: 10px;
+}
+.account-default {
+    display: inline-flex;
+    padding: 1px 5px;
+    border: 1px solid #ee4d2d;
+    color: #d94323;
+    font-size: 11px;
+    margin-top: 8px;
+}
+.account-record-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+}
+.account-confirm {
+    width: 100%;
+    background: #fff7f3;
+    padding: 14px;
+}
+.account-confirm p {
+    margin: 0 0 10px;
+}
+.account-confirm button {
+    margin-right: 8px;
+}
+.account-password {
+    padding-top: 12px;
+}
+.account-content .purchase-page {
+    padding: 0;
+    min-height: 0;
+    background: transparent;
+    --purchase-accent: #d94323;
+}
+.account-content .purchase-layout {
+    display: block;
+}
+.account-content .purchase-content {
+    width: 100%;
+}
+.account-content .purchase-page .page-title {
+    margin: 0;
+    background: white;
+    padding: 22px 24px;
+    border: 1px solid #ededed;
+    border-bottom: 0;
+    border-radius: 2px 2px 0 0;
+}
+.account-content .purchase-page h1 {
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+.account-content .purchase-page .status-tabs {
+    border-radius: 0;
+}
+.account-content .purchase-page .order-card {
+    border-radius: 2px;
+}
+.account-content .purchase-page .button-primary,
+.account-content .purchase-page .button-secondary {
+    border-radius: 2px;
+}
+.voucher-search {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    background: #f7f7f7;
+    padding: 24px;
+    margin-bottom: 14px;
+}
+.voucher-search label {
+    white-space: nowrap;
+    font-size: 14px;
+}
+.voucher-search input {
+    min-width: 0;
+}
+.voucher-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #eee;
+    overflow-x: auto;
+    margin-bottom: 22px;
+}
+.voucher-tabs button {
+    padding: 16px 12px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    font-size: 13px;
+    color: #666;
+    white-space: nowrap;
+}
+.voucher-tabs [aria-pressed='true'] {
+    border-bottom-color: #ee4d2d;
+    color: #d94323;
+}
+.voucher-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.voucher-ticket {
+    display: flex;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 2px 5px #00000006;
+    min-width: 0;
+}
+.voucher-stub {
+    width: 100px;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #ee4d2d;
+    color: #fff;
+    border-right: 2px dashed #fff8;
+    padding: 15px 8px;
+    text-align: center;
+}
+.voucher-stub svg {
+    width: 36px;
+    height: 36px;
+}
+.voucher-stub strong {
+    font-size: 19px;
+}
+.voucher-stub span {
+    font-size: 10px;
+    letter-spacing: 0.5px;
+}
+.voucher-body {
+    padding: 16px;
+    flex: 1;
+    min-width: 0;
+}
+.account-panel .voucher-body h2 {
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+.voucher-body p {
+    font-size: 12px;
+    margin: 4px 0;
+    color: #666;
+}
+.voucher-body code {
+    display: inline-block;
+    margin: 7px 0;
+    color: #c13e24;
+    background: #fff4ef;
+    padding: 2px 6px;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+.voucher-body .voucher-time,
+.voucher-body .voucher-small {
+    color: #888;
+    font-size: 10px;
+}
+.voucher-body .account-secondary {
+    color: #d94323;
+    border-color: #ee4d2d;
+    margin-top: 10px;
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 12px;
+}
+.voucher-usage {
+    background: #e9e9e9;
+    height: 4px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 9px 0;
+}
+.voucher-usage span {
+    display: block;
+    height: 100%;
+    background: #ee4d2d;
+}
+.voucher-disabled .voucher-stub {
+    background: #aaa;
+}
+.voucher-disabled .voucher-body {
+    background: #fafafa;
+}
+.dark .account-shell,
+.dark .account-area {
+    background: #171d26;
+    color: #e8ecf2;
+}
+.dark .account-panel,
+.dark .account-panel input:not([type='checkbox']):not([type='radio']),
+.dark .account-secondary,
+.dark .account-content .purchase-page .page-title {
+    background: #202833;
+    color: #e8ecf2;
+    border-color: #38404c;
+}
+.dark .account-sidebar a,
+.dark .account-sidebar p,
+.dark .account-form-row > span:first-child,
+.dark .account-panel-header p {
+    color: #acb4c1;
+}
+.dark .account-sidebar .account-active {
+    color: #ffad8b;
+}
+@media (max-width: 1050px) {
+    .account-frame {
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 20px;
+    }
+    .profile-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .profile-avatar {
+        grid-row: 1;
+        border-left: 0;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+        padding: 0 0 22px;
+    }
+    .voucher-grid {
+        grid-template-columns: 1fr;
+    }
+}
+@media (max-width: 700px) {
+    .account-area {
+        padding: 16px 12px 36px;
+    }
+    .account-frame {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .account-sidebar {
+        background: #fff;
+        padding: 0 16px 12px;
+        border: 1px solid #eee;
+    }
+    .account-identity {
+        padding: 14px 0;
+        margin-bottom: 8px;
+    }
+    .account-sidebar nav {
+        display: flex;
+        overflow-x: auto;
+        align-items: center;
+        gap: 18px;
+    }
+    .account-nav-label {
+        white-space: nowrap;
+    }
+    .account-subnav {
+        display: flex;
+        padding: 0;
+        gap: 18px;
+    }
+    .account-subnav a {
+        white-space: nowrap;
+        min-height: 44px;
+    }
+    .account-sidebar nav > p,
+    .account-logout {
+        display: none;
+    }
+    .account-panel {
+        padding: 0 18px 24px;
+        min-height: 400px;
+    }
+    .account-panel-header {
+        padding: 20px 0;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+    .account-panel h1,
+    .account-panel h2 {
+        font-size: 18px;
+    }
+    .account-form-row,
+    .profile-grid .account-form-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    .account-form-row > span:first-child {
+        text-align: left;
+    }
+    .account-form-row > span:empty {
+        display: none;
+    }
+    .account-record > div:first-child {
+        max-width: 100%;
+    }
+    .account-record-actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .voucher-search {
+        padding: 16px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .voucher-search label {
+        width: 100%;
+    }
+    .voucher-search input {
+        flex: 1;
+    }
+    .voucher-stub {
+        width: 82px;
+        min-width: 82px;
+    }
+    .voucher-body {
+        padding: 12px;
+    }
+    .account-phone {
+        display: block;
+        border-left: 0;
+        margin: 4px 0 0;
+        padding: 0;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .account-panel *,
+    .account-sidebar * {
+        transition: none !important;
+    }
+}
