@@ -43,7 +43,7 @@ export function localDate(value) {
   const date = value ? new Date(String(value).replace(' ', 'T')) : null
   return date && Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat('vi-VN', { dateStyle: 'short', timeStyle: 'short' }).format(date) : '—'
 }
-export const addressLine = address => [address?.address, address?.town, address?.city, address?.state].filter(Boolean).join(', ')
+export const addressLine = address => [...new Set([address?.address, address?.town, address?.state].map(part => part?.trim()).filter(Boolean))].join(', ')
 
 export function cartOptions(item) {
   return (item.product_model?.variation_index ?? []).map((index, dimension) => {

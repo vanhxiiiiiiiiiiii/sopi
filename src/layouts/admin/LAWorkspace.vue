@@ -17,6 +17,7 @@ const links = computed(() => [
   ['/admin/commerce', 'Quản lý mua bán', 'commerce'], ['/admin/sellers', 'Duyệt người bán', 'commerce'],
   ['/admin/shipping/shipments', 'Vận đơn', 'logistics'], ['/admin/shipping/providers', 'Đơn vị vận chuyển', 'logistics'],
   ['/admin/shipping/staff', 'Nhân viên vận chuyển', 'logistics'],
+  ['/admin/shipping/rates', 'Phí vận chuyển', 'logistics'],
 ].filter(([, , permission]) => !permission || canAdmin(permission)))
 async function authorize() {
   const current = ++revision

@@ -21,6 +21,7 @@ AxiosInstance.interceptors.request.use(
     return request
   },
   (error) => {
+    if (axios.isCancel(error)) return Promise.reject(error)
     const message = error?.response?.data?.message || error?.message || 'Không gửi được yêu cầu'
     toast().updateToast('error', message, true)
     error.__toastShown = true
@@ -35,6 +36,7 @@ AxiosInstance.interceptors.response.use(
     return response
   },
   (error) => {
+    if (axios.isCancel(error)) return Promise.reject(error)
     const validationMessage = Object.values(error?.response?.data?.errors || error?.response?.data?.error || {})
       .flat()
       .find(Boolean)

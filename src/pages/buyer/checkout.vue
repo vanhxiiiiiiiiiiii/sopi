@@ -8,9 +8,11 @@ import AccountRequest from '~/services/account-request'
 import CartRequest from '~/services/cart-request'
 import OrderRequest from '~/services/order-request'
 import PaymentRequest from '~/services/payment-request'
+import ShippingRequest from '~/services/shipping-request'
 import { useCart } from '~/stores/cart'
 import { addressLine, cartOptions, money, requestError } from '~/utils/checkout'
 import { fallbackProductImage, getResources } from '~/utils/resources'
+import { createShippingQuoteRunner } from '~/utils/shipping-quote.mjs'
 
 const router = useRouter()
 const route = useRoute()
@@ -26,13 +28,12 @@ const cart = useCart()
 const addresses = ref([])
 const addressId = ref('')
 const newAddress = ref(false)
-const recipient = reactive({ full_name: '', phone: '', address: '', town: '', city: '', state: '' })
+const recipient = reactive({ full_name: '', phone: '', address: '', town: '', state: '' })
 const addressFields = [
   { name: 'full_name', label: 'Họ tên người nhận', max: 64 },
   { name: 'phone', label: 'Số điện thoại', max: 11, pattern: '[0-9]{10,11}' },
   { name: 'address', label: 'Số nhà và tên đường', max: 255 },
   { name: 'town', label: 'Phường / xã', max: 50 },
-  { name: 'city', label: 'Quận / huyện', max: 50 },
   { name: 'state', label: 'Tỉnh / thành phố', max: 50 },
 ]
 const savingAddress = ref(false)
@@ -49,6 +50,13 @@ const paymentMethodId = ref('')
 const paymentOptions = ref(null)
 const paymentLoading = ref(true)
 const paymentError = ref('')
+const shippingSettings = ref(null)
+const location = ref(null)
+const quotedLocation = ref(null)
+const hub = computed(() => shippingSettings.value ? { latitude: Number(shippingSettings.value.hub_latitude), longitude: Number(shippingSettings.value.hub_longitude) } : null)
+const locationQuoted = computed(() => !!totals.value && !!location.value && !!quotedLocation.value
+  && Number(quotedLocation.value.latitude) === Number(location.value.latitude)
+  && Number(quotedLocation.value.longitude) === Number(location.value.longitude))
 const validPayment = computed(() => paymentMethod.value === 'cod'
   ? !!paymentOptions.value?.cod_available
   : !!paymentOptions.value?.card_available && paymentOptions.value.cards.some(card => card.id === Number(paymentMethodId.value) && card.usable))
@@ -69,6 +77,7 @@ const chosen = computed(() =>
   cart.result.filter(item => modelIds.includes(item.product_model_id)),
 )
 const quantity = computed(() => chosen.value.reduce((sum, item) => sum + Number(item.quantity), 0))
+const merchandiseSubtotal = computed(() => chosen.value.reduce((sum, item) => sum + Number(item.final_total_price), 0))
 const cartAvailable = computed(
   () =>
     chosen.value.length > 0
@@ -76,21 +85,45 @@ const cartAvailable = computed(
         && !chosen.value.some(item => item.unavailable_reason),
 )
 
-async function quote(code = null) {
-  quoting.value = true
-  error.value = ''
-  try {
-    const { data } = await OrderRequest.quoteCart(code, modelIds)
+const quoteRunner = createShippingQuoteRunner({
+  request: (payload, signal) => OrderRequest.quoteCart(payload.code, modelIds, payload.addressId, payload.location, signal),
+  onStart: () => { quoting.value = true; error.value = ''; totals.value = null; quotedLocation.value = null },
+  onSuccess: ({ data }, payload) => {
     totals.value = data
-    appliedVoucher.value = code
+    appliedVoucher.value = payload.code
+    quotedLocation.value = payload.location
+  },
+  onError: failure => { error.value = requestError(failure, 'Không tính được phí vận chuyển. Hãy chọn lại địa chỉ hoặc vị trí trên bản đồ.') },
+  onSettled: () => { quoting.value = false },
+})
+async function quote(code = null) {
+  if (!location.value || !cartAvailable.value || pending.value || submitting.value) {
+    invalidateQuote()
+    return
   }
-  catch (failure) {
-    error.value = requestError(failure, 'Không tính được tổng tiền.')
-  }
-  finally {
-    quoting.value = false
-  }
+  return quoteRunner.run({ code, addressId: newAddress.value ? null : addressId.value || null, location: { ...location.value } })
 }
+function invalidateQuote() {
+  quoteRunner.invalidate()
+  totals.value = null
+  quotedLocation.value = null
+  quoting.value = false
+}
+function changeLocation(point) {
+  location.value = point
+  quote(appliedVoucher.value)
+}
+watch([addressId, newAddress], () => {
+  invalidateQuote()
+  const address = selectedAddress.value
+  location.value = !newAddress.value && address?.latitude != null && address?.longitude != null
+    ? { latitude: Number(address.latitude), longitude: Number(address.longitude) } : null
+  if (!loading.value && !pending.value && location.value) quote(appliedVoucher.value)
+})
+watch(() => [recipient.address, recipient.town, recipient.state], () => {
+  if (newAddress.value) { location.value = null; invalidateQuote() }
+})
+onBeforeUnmount(() => quoteRunner.invalidate())
 
 onMounted(async() => {
   if (!localStorage.getItem('token')) {
@@ -105,16 +138,19 @@ onMounted(async() => {
       paymentMethod.value = pending.value.payment_method
       paymentMethodId.value = pending.value.payment_method_id || ''
     }
-    const [{ data: items }, { data: savedAddresses }] = await Promise.all([
+    const [{ data: items }, { data: savedAddresses }, { data: settings }] = await Promise.all([
       CartRequest.getCart(),
       AccountRequest.getAddress(),
+      ShippingRequest.settings(),
     ])
     cart.result = items
     addresses.value = savedAddresses
+    shippingSettings.value = settings
     addressId.value = savedAddresses[0]?.id ?? ''
     newAddress.value = !savedAddresses.length
     await loadPaymentOptions()
-    if (cartAvailable.value && !pending.value) await quote()
+    await nextTick()
+    if (cartAvailable.value && !pending.value && location.value) await quote()
   }
   catch (failure) {
     error.value = requestError(failure, 'Không tải được thông tin thanh toán.')
@@ -130,9 +166,9 @@ async function saveAddress() {
   error.value = ''
   try {
     const { data } = await AccountRequest.createAddress(
-      Object.fromEntries(
+      { ...Object.fromEntries(
         Object.entries(recipient).map(([field, value]) => [field, value.trim()]),
-      ),
+      ), ...(location.value ? { ...location.value } : {}) },
     )
     addresses.value.push(data)
     addressId.value = data.id
@@ -150,7 +186,7 @@ async function placeOrder() {
   if (
     submitting.value
         || (!pending.value
-            && (!selectedAddress.value || !cartAvailable.value || !totals.value || newAddress.value || !validPayment.value))
+            && (!selectedAddress.value || !cartAvailable.value || !totals.value || newAddress.value || !validPayment.value || !locationQuoted.value || quoting.value))
   )
     return
   submitting.value = true
@@ -163,6 +199,8 @@ async function placeOrder() {
         payment_method: paymentMethod.value,
         payment_method_id: paymentMethod.value === 'card' ? Number(paymentMethodId.value) : null,
         voucher_code: appliedVoucher.value,
+        expected_payment_total: totals.value.payment_total,
+        delivery_location: { ...location.value },
         orders: chosen.value.map(item => ({
           product_model_id: item.product_model_id,
           quantity: item.quantity,
@@ -187,6 +225,10 @@ async function placeOrder() {
     if ([400, 422, 503].includes(failure.response?.status)) {
       sessionStorage.removeItem(pendingKey)
       pending.value = null
+      const message = error.value
+      submitting.value = false
+      if (location.value) await quote(appliedVoucher.value)
+      error.value ||= message
     }
   }
   finally {
@@ -281,12 +323,12 @@ async function placeOrder() {
                 </p>
                 <p>{{ addressLine(selectedAddress) }}</p>
               </div>
-              <button type="button" class="text-button" @click="newAddress = true">
+              <button type="button" class="text-button" :disabled="submitting" @click="newAddress = true">
                 Thêm địa chỉ mới
               </button>
             </div>
             <label v-if="addresses.length > 1" class="address-picker">Chọn địa chỉ khác
-              <select v-model="addressId">
+              <select v-model="addressId" :disabled="submitting">
                 <option
                   v-for="address in addresses"
                   :key="address.id"
@@ -320,8 +362,7 @@ async function placeOrder() {
                       full_name: 'shipping name',
                       phone: 'shipping tel',
                       address: 'shipping address-line1',
-                      town: 'shipping address-line2',
-                      city: 'shipping address-level2',
+                      town: 'shipping address-level2',
                       state: 'shipping address-level1',
                     }[field.name]
                   "
@@ -352,6 +393,14 @@ async function placeOrder() {
               </button>
             </div>
           </form>
+          <div v-if="selectedAddress || newAddress" class="checkout-location">
+            <h3>Vị trí giao hàng</h3>
+            <p class="form-hint">Chọn kết quả tìm địa chỉ hoặc nhấn trên bản đồ để tự cập nhật phí từ {{ shippingSettings?.hub_name }}. Địa chỉ tìm kiếm được gửi đến dịch vụ bản đồ OpenStreetMap.</p>
+            <CShippingMap :model-value="location" :hub="hub" :geometry="totals?.shipping_route?.geometry" :search-text="addressLine(newAddress ? recipient : selectedAddress)" :disabled="savingAddress || submitting" auto-quote @update:model-value="changeLocation" />
+            <p v-if="quoting" class="form-hint" role="status" aria-live="polite">Đang tự cập nhật tuyến đường, phí vận chuyển và tổng tiền…</p>
+            <p v-else-if="locationQuoted" class="voucher-success" role="status">Đã cập nhật phí theo vị trí vừa chọn.</p>
+            <p v-else class="form-hint">Chọn vị trí trên bản đồ hoặc chọn một kết quả tìm địa chỉ để xem phí ngay.</p>
+          </div>
         </section>
 
         <section class="checkout-card products-card" aria-labelledby="products-title">
@@ -427,10 +476,19 @@ async function placeOrder() {
                 <circle cx="18" cy="18" r="2" /></svg></span>
               <div>
                 <h3>Phí vận chuyển</h3>
-                <p>Được tính trong tổng thanh toán</p>
+                <p v-if="totals">{{ totals.shipping_details.length }} đơn theo shop · {{ totals.shipping_route.distance_km }} km từ kho trung tâm</p>
+                <p v-else>{{ quoting ? 'Đang cập nhật theo vị trí vừa chọn' : 'Chọn địa chỉ để xem phí vận chuyển' }}</p>
               </div>
             </div>
-            <strong>{{ money(totals?.shipping_fee) }}</strong>
+            <strong>{{ quoting ? 'Đang tính…' : totals ? money(totals.shipping_fee) : 'Chưa tính' }}</strong>
+          </div>
+          <div v-if="totals" class="checkout-shipping-details" aria-live="polite">
+            <div v-for="detail in totals.shipping_details" :key="detail.shop_id" class="checkout-shipping-shop">
+              <div><strong>{{ detail.shop_name }}</strong><strong>{{ detail.free_shipping ? 'Miễn phí' : money(detail.fee) }}</strong></div>
+              <p>{{ (detail.weight_grams / 1000).toLocaleString('vi-VN') }} kg · {{ detail.distance_km }} km</p>
+              <p v-if="detail.free_shipping">Phí theo tuyến đường {{ money(detail.original_fee) }} được miễn vì tiền hàng của shop đạt {{ money(detail.free_shipping_threshold) }}.</p>
+              <p v-else>Phí cơ bản {{ money(detail.base_fee) }} + cân nặng {{ money(detail.weight_fee) }} + quãng đường {{ money(detail.distance_fee) }}.</p>
+            </div>
           </div>
         </section>
 
@@ -495,11 +553,11 @@ async function placeOrder() {
             <dl class="summary-lines">
               <div>
                 <dt>Tổng tiền hàng</dt>
-                <dd>{{ money(totals?.subtotal) }}</dd>
+                <dd>{{ money(totals?.subtotal ?? merchandiseSubtotal) }}</dd>
               </div>
               <div>
                 <dt>Phí vận chuyển</dt>
-                <dd>{{ money(totals?.shipping_fee) }}</dd>
+                <dd>{{ quoting ? 'Đang tính…' : totals ? money(totals.shipping_fee) : 'Chưa tính' }}</dd>
               </div>
               <div>
                 <dt>Giảm giá</dt>
@@ -510,11 +568,15 @@ async function placeOrder() {
               </div>
             </dl>
             <div class="grand-total">
-              <span>Tổng thanh toán</span><strong>{{ money(totals?.payment_total) }}</strong>
+              <span>Tổng thanh toán</span><strong>{{ quoting ? 'Đang tính…' : totals ? money(totals.payment_total) : 'Chưa tính' }}</strong>
             </div>
             <p v-if="newAddress || !selectedAddress" class="checkout-hint">
               Vui lòng lưu địa chỉ nhận hàng để đặt hàng.
             </p>
+            <p
+              v-else-if="!locationQuoted || !totals"
+              class="checkout-hint"
+            >{{ quoting ? 'Đang tự cập nhật phí vận chuyển…' : 'Chọn vị trí nhận hàng trên bản đồ để hệ thống tự tính phí.' }}</p>
             <p
               v-else-if="(voucher.trim() || null) !== appliedVoucher"
               class="checkout-hint"
@@ -528,6 +590,7 @@ async function placeOrder() {
                 submitting || !validPayment ||
                   quoting ||
                   savingAddress ||
+                  !locationQuoted ||
                   !selectedAddress ||
                   !totals ||
                   newAddress ||
@@ -549,6 +612,12 @@ async function placeOrder() {
 </template>
 
 <style scoped>
+.checkout-location { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e8e9ec; }
+.checkout-location h3 { font-size: 16px; font-weight: 600; }
+.checkout-shipping-details { padding: 0 24px 20px; }
+.checkout-shipping-shop { padding: 14px 0; border-top: 1px solid #e8e9ec; }
+.checkout-shipping-shop > div { display: flex; justify-content: space-between; gap: 16px; }
+.checkout-shipping-shop p { color: #69717c; margin: 5px 0 0; font-size: 13px; }
 .checkout-page {
     --accent: #c43e1c;
     --accent-soft: #fff5ef;

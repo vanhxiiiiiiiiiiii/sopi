@@ -14,8 +14,9 @@ class OrderRequest {
     return AxiosInstance.get(url, data)
   }
 
-  quoteCart(voucherCode, modelIds) {
-    return AxiosInstance.post('/user/orders/quote', { voucher_code: voucherCode, model_ids: modelIds })
+  quoteCart(voucherCode, modelIds, addressId, location, signal) {
+    return AxiosInstance.post('/user/orders/quote', { voucher_code: voucherCode, model_ids: modelIds, address_id: addressId,
+      ...(location ? { delivery_location: location } : {}) }, { signal })
   }
 
   updateShopOrderStatus(id, statusId) {

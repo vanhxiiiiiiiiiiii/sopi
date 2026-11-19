@@ -66,6 +66,7 @@ declare module 'vue' {
     CShipmentBoard: typeof import('./components/delivery/CShipmentBoard.vue')['default']
     CShipmentDetails: typeof import('./components/delivery/CShipmentDetails.vue')['default']
     CShipmentTimeline: typeof import('./components/delivery/CShipmentTimeline.vue')['default']
+    CShippingMap: typeof import('./components/CShippingMap.vue')['default']
     CSlick: typeof import('./components/CSlick.vue')['default']
     Cswitch: typeof import('./components/Cswitch.vue')['default']
     CSystemBrand: typeof import('./components/CSystemBrand.vue')['default']

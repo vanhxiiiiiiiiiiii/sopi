@@ -18,7 +18,6 @@ const fields = [
     { key: 'full_name', label: 'Họ và tên', max: 64 },
     { key: 'phone', label: 'Số điện thoại', pattern: '[0-9]{10,11}', max: 11 },
     { key: 'state', label: 'Tỉnh / thành phố', max: 50 },
-    { key: 'city', label: 'Quận / huyện', max: 50 },
     { key: 'town', label: 'Phường / xã', max: 50 },
     { key: 'address', label: 'Số nhà, tên đường', max: 255 },
 ]

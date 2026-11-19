@@ -346,6 +346,10 @@ function stageReached(id) {
                   <dt>Phí vận chuyển</dt>
                   <dd>{{ money(order.shipping_fee) }}</dd>
                 </div>
+                <div v-if="order.shipping_snapshot">
+                  <dt>Kiện hàng / quãng đường</dt>
+                  <dd>{{ (order.shipping_snapshot.weight_grams / 1000).toLocaleString('vi-VN') }} kg · {{ order.shipping_snapshot.distance_km }} km</dd>
+                </div>
                 <div>
                   <dt>Giảm giá</dt>
                   <dd class="discount">

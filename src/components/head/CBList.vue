@@ -128,7 +128,7 @@ const handleOrder = () => {
         </button>
       </div>
       <p class="minicart-message p-5 text-xs">
-        {{ t('cart.free-ship') }} $1000!
+        Phí vận chuyển được tính theo cân nặng và khoảng cách khi thanh toán.
       </p>
     </div>
   </div>
