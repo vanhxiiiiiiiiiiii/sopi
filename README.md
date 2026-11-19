@@ -43,7 +43,3 @@ npx pnpm@9.15.9 build
 ```
 
 GitHub Actions cài dependencies theo lockfile và build frontend. Không commit `.env.local`, dependencies hoặc thư mục `dist`.
-
-## Nguồn gốc
-
-Phát triển từ [thuongtruong1009/e-shopee](https://github.com/thuongtruong1009/e-shopee). Thông tin tác giả và giấy phép MIT của mã nguồn gốc được giữ trong dự án.
