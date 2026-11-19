@@ -1,0 +1,254 @@
+.seller-workspace {
+    background: #f5f5f5;
+    color: #30343b;
+    min-height: 100vh;
+    text-align: left;
+    font: 14px/1.6 Arial, sans-serif;
+}
+.seller-header {
+    height: 72px;
+    background: white;
+    border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 28px;
+}
+.seller-logo {
+    font-size: 25px;
+    color: #d94323;
+    text-decoration: none;
+    font-weight: 600;
+}
+.seller-account {
+    margin-left: auto;
+    color: #666;
+    font-size: 13px;
+}
+.seller-grid {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+}
+.seller-sidebar {
+    background: white;
+    min-height: calc(100vh - 72px);
+    padding: 28px 20px;
+}
+.seller-sidebar strong {
+    display: block;
+    margin-bottom: 28px;
+}
+.seller-sidebar p {
+    font-size: 11px;
+    color: #888;
+    letter-spacing: 1px;
+}
+.seller-sidebar nav {
+    display: grid;
+    margin: 12px 0 40px;
+}
+.seller-sidebar a {
+    display: block;
+    padding: 12px 10px;
+    color: #555;
+    text-decoration: none;
+    border-radius: 3px;
+}
+.seller-sidebar .selected {
+    background: #fff1eb;
+    color: #d94323;
+}
+.seller-content {
+    padding: 28px;
+    min-width: 0;
+}
+.seller-breadcrumb {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 20px;
+}
+.seller-content > div {
+    width: 100%;
+    max-width: none;
+}
+.seller-content h1 {
+    font-size: 24px;
+    margin-bottom: 24px;
+}
+.seller-content h2 {
+    font-size: 18px;
+    margin-bottom: 18px;
+}
+.seller-content table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+.seller-content th,
+.seller-content td {
+    text-align: left;
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+}
+.seller-panel,
+.seller-content .bg-white {
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 24px;
+}
+.seller-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+.seller-stats > a,
+.seller-stats > div {
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border: 1px solid #eee;
+    padding: 22px;
+    text-decoration: none;
+    color: #555;
+    border-radius: 6px;
+}
+.seller-stats strong {
+    font-size: 24px;
+    color: #d94323;
+}
+.seller-stats span {
+    font-size: 12px;
+}
+.seller-welcome {
+    max-width: 1100px;
+    margin: 36px auto;
+    background: white;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 64px 32px;
+    text-align: center;
+}
+.seller-welcome h1 {
+    font-size: 28px;
+    margin: 18px 0;
+}
+.seller-welcome p {
+    color: #777;
+    max-width: 640px;
+    margin: 12px auto 28px;
+}
+.seller-workspace button {
+    cursor: pointer;
+}
+.seller-welcome button,
+.seller-content button[type='submit'] {
+    background: #d94323;
+    color: white;
+    border: 0;
+    border-radius: 4px;
+    padding: 12px 24px;
+}
+.seller-workspace button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.seller-workspace a:focus-visible,
+.seller-workspace button:focus-visible {
+    outline: 3px solid #e57a59;
+    outline-offset: 3px;
+}
+.seller-emblem {
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: #fff0e9;
+    color: #ee4d2d;
+    font-size: 46px;
+}
+.seller-application {
+    max-width: 540px;
+    margin: auto;
+    text-align: left;
+}
+.seller-application label {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+.seller-application input,
+.seller-application textarea {
+    display: block;
+    width: 100%;
+    padding: 11px;
+    margin-top: 6px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+.seller-error {
+    margin: 20px;
+    padding: 16px;
+    background: #fff1ed;
+    color: #a33722;
+}
+.seller-onboarding {
+    padding: 0 24px;
+}
+.seller-content form input,
+.seller-content form textarea,
+.seller-content form select {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 3px;
+}
+.seller-content .max-w-4xl,
+.seller-content .max-w-5xl {
+    max-width: none;
+}
+@media (max-width: 760px) {
+    .seller-grid {
+        grid-template-columns: 1fr;
+    }
+    .seller-sidebar {
+        min-height: 0;
+        padding: 16px;
+    }
+    .seller-sidebar nav {
+        display: flex;
+        overflow: auto;
+        margin: 0;
+        gap: 12px;
+    }
+    .seller-sidebar nav a {
+        white-space: nowrap;
+    }
+    .seller-sidebar p,
+    .seller-sidebar > strong,
+    .seller-sidebar > a {
+        display: none;
+    }
+    .seller-content {
+        padding: 18px 12px;
+    }
+    .seller-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .seller-header {
+        padding: 0 16px;
+        gap: 12px;
+    }
+    .seller-header > span {
+        font-size: 12px;
+    }
+    .seller-welcome {
+        padding: 32px 20px;
+    }
+    .seller-panel {
+        overflow: auto;
+    }
+}
